@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import MMDrawerController
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,6 +17,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        let rootView = self.window!.rootViewController as! MMDrawerController
+        let presetsMenu = rootView.leftDrawerViewController as! PresetsTableViewController
+        let mainView = rootView.centerViewController as! ViewController
+        presetsMenu.timerController = mainView
+        rootView.openDrawerGestureModeMask = MMOpenDrawerGestureMode.all
+        rootView.closeDrawerGestureModeMask = MMCloseDrawerGestureMode.all
         return true
     }
 
