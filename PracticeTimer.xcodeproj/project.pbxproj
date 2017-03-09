@@ -12,7 +12,6 @@
 		952D11C11E69AB29001BCAFF /* AddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952D11C01E69AB29001BCAFF /* AddViewController.swift */; };
 		952D11C31E69BADB001BCAFF /* BellSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952D11C21E69BADB001BCAFF /* BellSelectViewController.swift */; };
 		952D11C51E69D31F001BCAFF /* BellCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952D11C41E69D31F001BCAFF /* BellCollectionViewCell.swift */; };
-		955322681E6B88E3000CA9A2 /* sounds in Sources */ = {isa = PBXBuildFile; fileRef = 95FADB561E685A390005B11F /* sounds */; };
 		95FADB451E68579E0005B11F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95FADB441E68579E0005B11F /* AppDelegate.swift */; };
 		95FADB471E68579E0005B11F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95FADB461E68579E0005B11F /* ViewController.swift */; };
 		95FADB4A1E68579E0005B11F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 95FADB481E68579E0005B11F /* Main.storyboard */; };
@@ -238,7 +237,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				955322681E6B88E3000CA9A2 /* sounds in Sources */,
 				95FADB471E68579E0005B11F /* ViewController.swift in Sources */,
 				95FADB5D1E6862670005B11F /* TableViewCell.swift in Sources */,
 				950610AE1E6F1CB9003594B0 /* RealmModel.swift in Sources */,

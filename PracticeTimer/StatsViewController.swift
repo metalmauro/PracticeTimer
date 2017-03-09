@@ -35,6 +35,7 @@ class StatsViewController: UITableViewController, statsControl {
         // relaod Chart Data
         
     }
+    
 //    //MARK: - cell for row
 //    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 //        
