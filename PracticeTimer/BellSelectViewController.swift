@@ -42,10 +42,6 @@ class BellSelectViewController: UIViewController, UICollectionViewDelegate, UICo
         self.selectingBell.text = "Select the Timer Bell"
         self.selectingBell.sizeToFit()
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-    }
     
     //MARK: - Play SoundFile
     // takes in String for soundFile, and plays file the number of times inputted

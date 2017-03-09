@@ -21,7 +21,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let rootView = self.window!.rootViewController as! MMDrawerController
         let presetsMenu = rootView.leftDrawerViewController as! PresetsTableViewController
         let mainView = rootView.centerViewController as! ViewController
+        let stats = rootView.rightDrawerViewController as! StatsViewController
         presetsMenu.timerController = mainView
+        mainView.stats = stats
         rootView.openDrawerGestureModeMask = MMOpenDrawerGestureMode.all
         rootView.closeDrawerGestureModeMask = MMCloseDrawerGestureMode.all
         return true

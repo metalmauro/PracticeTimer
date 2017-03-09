@@ -9,10 +9,14 @@
 import UIKit
 import AVFoundation
 import MMDrawerController
+import RealmSwift
 
 enum TimerStage {
     case WarmUp
     case MainSession
+}
+protocol statsControl {
+    func recentlyCompleted(_ completed:completedSession)
 }
 
 class ViewController: UIViewController, UIGestureRecognizerDelegate, TimerControl {
@@ -28,6 +32,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, TimerContro
     var selectedPreset:Preset?
     var bellTower: AVAudioPlayer?
     var isPaused = true
+    let realm = try! Realm()
+    var stats:statsControl?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -123,6 +129,20 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, TimerContro
             self.finishEarlyButton.isUserInteractionEnabled = true
         }
     }
+    @IBAction func finishButton(_ sender: Any) {
+        guard self.warmUpCount == 0 else {
+            self.setPreset(selectedPreset!)
+            return
+        }
+        let elapsedTime = (self.selectedPreset?.timeLength)! - self.count!
+        let finished = completedSession()
+        finished.date = Date() as NSDate
+        finished.elapsedTime = elapsedTime
+        try! realm.write {
+            realm.add(finished)
+        }
+    }
+    
     func tapGesture(sender: UITapGestureRecognizer? = nil) {
         guard self.selectedPreset?.tapEnabled == true else {
             return
@@ -140,6 +160,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, TimerContro
         self.warmUpCount = self.selectedPreset?.warmupTime
         self.isPaused = true
         self.warmUpLabel.isHidden = true
+        self.timerLabel.text = self.timeString(time: self.count!)
         self.finishEarlyButton.isUserInteractionEnabled = false
         self.finishEarlyButton.isHidden = true
         self.reloadInputViews()

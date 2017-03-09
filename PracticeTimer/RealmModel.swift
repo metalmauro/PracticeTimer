@@ -9,7 +9,6 @@
 import Foundation
 import RealmSwift
 
-
 class RealmModel: Object {
 
     // Specify properties to ignore (Realm won't persist these)

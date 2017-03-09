@@ -23,8 +23,6 @@ class PresetsTableViewController: ViewController, UITableViewDataSource, UITable
     @IBOutlet weak var tableView: UITableView!
     var timerController:TimerControl?
     
-    let realm = try! Realm()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.contentInset.top = 20
@@ -36,13 +34,11 @@ class PresetsTableViewController: ViewController, UITableViewDataSource, UITable
             self.presets.append(object)
         }
     }
-
+    
 // MARK: - TableView data source
-
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
-
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard self.presets.count > 0 else {
             let defaultPreset = Preset()
@@ -60,7 +56,6 @@ class PresetsTableViewController: ViewController, UITableViewDataSource, UITable
         }
         return (self.presets.count)
     }
-
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TableViewCell
         cell.configureSelf((self.presets[indexPath.row]))
@@ -91,13 +86,10 @@ class PresetsTableViewController: ViewController, UITableViewDataSource, UITable
         self.tableView.reloadData()
     }
     
-
-    
     // Override to support rearranging the table view.
     func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
 
     }
-    
     @IBAction func editFunc(_ sender: Any) {
         guard self.tableView.isEditing == false else {
             self.tableView.setEditing(false, animated: true)
@@ -105,14 +97,11 @@ class PresetsTableViewController: ViewController, UITableViewDataSource, UITable
         }
         self.tableView.setEditing(true, animated: true)
     }
-    
     // Override to support conditional rearranging of the table view.
     func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
         // Return false if you do not want the item to be re-orderable.
         return true
     }
-    
-   
     // MARK: - Navigation
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
