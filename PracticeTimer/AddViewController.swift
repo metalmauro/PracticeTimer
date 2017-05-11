@@ -34,7 +34,13 @@ class AddViewController: UITableViewController {
         guard self.timeLengthPicker != nil else {
             return
         }
-        
+        var dateC = DateComponents(calendar: Calendar.current)
+        dateC.second = 0
+        dateC.hour = 0
+        dateC.minute = 5
+        let date = Calendar.current.date(from: dateC)
+        self.timeLengthPicker.setDate(date!, animated: false)
+        self.warmUpPicker.setDate(date!, animated: false)
     }
 
     override func didReceiveMemoryWarning() {
@@ -90,8 +96,8 @@ class AddViewController: UITableViewController {
         new.endingSound = self.startEndBell!
         new.tapEnabled = self.tapEnabled.isOn
         new.tapSound = self.tapBell
-        new.timeLength = round(self.timeLengthPicker.countDownDuration)*60
-        new.warmupTime = round(self.warmUpPicker.countDownDuration)*60
+        new.timeLength = round(self.timeLengthPicker.countDownDuration)
+        new.warmupTime = round(self.warmUpPicker.countDownDuration)
         let realm = try! Realm()
         try! realm.write {
             realm.add(new)

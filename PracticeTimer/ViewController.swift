@@ -12,15 +12,19 @@ import MMDrawerController
 import RealmSwift
 
 enum TimerStage {
-    case WarmUp
-    case MainSession
+    case unSet
+    case starting
+    case warmUp
+    case mainSession
+    case paused
+    case ended
 }
 protocol statsControl {
     func recentlyCompleted(_ completed:completedSession)
 }
 
 class ViewController: UIViewController, UIGestureRecognizerDelegate, TimerControl {
-
+    
     @IBOutlet var bellTap: UITapGestureRecognizer!
     @IBOutlet weak var warmUpLabel: UILabel!
     @IBOutlet weak var timerLabel: UILabel!
@@ -31,9 +35,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, TimerContro
     var count:Double?
     var selectedPreset:Preset?
     var bellTower: AVAudioPlayer?
-    var isPaused = true
     let realm = try! Realm()
     var stats:statsControl?
+    var stage:TimerStage?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,7 +47,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, TimerContro
             
             return
         }
-        self.isPaused = true
+        self.stage = TimerStage.unSet
         self.bellTap = UITapGestureRecognizer(target: self, action: #selector(ViewController.tapGesture(sender:)))
         self.bellTap.delegate = self
         self.view.addGestureRecognizer(bellTap)
@@ -61,7 +65,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, TimerContro
         // Preset is not nil
         self.startButton.isHidden = false
         self.startButton.isUserInteractionEnabled = true
-       
+        
     }
     //MARK: - Set Preset
     func setPreset(_ preset:Preset) {
@@ -73,33 +77,47 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, TimerContro
             self.timerLabel.text = String(format: "%@ with %@mins",preset.title, minutes)
         }
         self.resetCounts()
-        self.isPaused = true
+        self.stage = TimerStage.starting
         self.timerLabel.sizeToFit()
-        self.startButton.isHidden = false
-        self.startButton.isUserInteractionEnabled = true
+        updateButtonsForStage()
         self.reloadInputViews()
     }
     
     //MARK: - Update (Timer functions)
     func update(){
-        guard self.isPaused == false else {
+        if UIApplication.shared.isIdleTimerDisabled == false {
+            UIApplication.shared.isIdleTimerDisabled = true
+        }
+        guard self.stage != TimerStage.paused else {
             // is paused, don't do anything
             return
         }
+        //from here on, our timer is running (not Paused)
+        // have to determine if we are on the main session or the warmUp period.
         guard self.warmUpCount! <= 0.0 else {
             // there is time on our warm up counter
+            if self.stage == TimerStage.starting {
+                self.stage = TimerStage.warmUp
+            }
             self.warmUpLabel.isHidden = false
             self.warmUpCount! -= 0.1
             self.timerLabel.text = String(format: "%@", self.timeString(time: self.warmUpCount!))
             return
         }
-        // warmup counter is at 0. 
+        // warmup counter is at 0.
         //If the main session is starting, ring our starting bell tone 3 times
-        guard self.count != 0 else {
-            //main counter is at 0, sound the ending bell
+        guard self.count != 0.0 else {
+            // main counter is at 0, sound the ending bell
             self.playSound(3, (self.selectedPreset?.endingSound)!)
             self.timer?.invalidate()
+            self.stage = TimerStage.ended
+            self.finishEarlyButton.isHidden = false
+            self.finishEarlyButton.isUserInteractionEnabled = true
+            updateButtonsForStage()
             return
+        }
+        if self.stage == TimerStage.warmUp {
+            self.stage = TimerStage.mainSession
         }
         self.warmUpLabel.isHidden = true
         if self.count == self.selectedPreset?.timeLength {
@@ -111,22 +129,24 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, TimerContro
     
     @IBAction func startAction(_ sender: Any) {
         if self.timer != nil {
-            self.startButton.setTitle("Start", for: UIControlState.normal)
+            self.startButton.setTitle("Resume", for: UIControlState.normal)
             timer?.invalidate()
+            self.stage = TimerStage.paused
+            updateButtonsForStage()
             timer = nil
-            self.isPaused = true
-            self.finishEarlyButton.isHidden = true
-            self.finishEarlyButton.isUserInteractionEnabled = false
         } else {
+            if warmUpCount! > 0.0 {
+                self.stage = TimerStage.warmUp
+            } else if self.count! > 0.0 && warmUpCount! <= 0.0 {
+                self.stage = TimerStage.mainSession
+            }
             self.startButton.setTitle("Pause", for: UIControlState.normal)
             self.timer = Timer.scheduledTimer(timeInterval: 0.1,
-                               target: self,
-                               selector: #selector(ViewController.update),
-                               userInfo: nil,
-                               repeats: true)
-            self.isPaused = false
-            self.finishEarlyButton.isHidden = false
-            self.finishEarlyButton.isUserInteractionEnabled = true
+                                              target: self,
+                                              selector: #selector(ViewController.update),
+                                              userInfo: nil,
+                                              repeats: true)
+            updateButtonsForStage()
         }
     }
     @IBAction func finishButton(_ sender: Any) {
@@ -138,16 +158,16 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, TimerContro
         let finished = completedSession()
         finished.date = Date() as NSDate
         finished.elapsedTime = elapsedTime
+        self.startButton.setTitle("Start", for: UIControlState.normal)
         try! realm.write {
             realm.add(finished)
         }
     }
-    
     func tapGesture(sender: UITapGestureRecognizer? = nil) {
         guard self.selectedPreset?.tapEnabled == true else {
             return
         }
-        guard self.isPaused == false else {
+        guard self.stage == TimerStage.warmUp || self.stage == TimerStage.mainSession else {
             return
         }
         self.playSound(1, (self.selectedPreset?.tapSound)!)
@@ -158,7 +178,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, TimerContro
         }
         self.count = self.selectedPreset?.timeLength
         self.warmUpCount = self.selectedPreset?.warmupTime
-        self.isPaused = true
+        self.stage = TimerStage.starting
         self.warmUpLabel.isHidden = true
         self.timerLabel.text = self.timeString(time: self.count!)
         self.finishEarlyButton.isUserInteractionEnabled = false
@@ -175,9 +195,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, TimerContro
         do {
             try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
             try AVAudioSession.sharedInstance().setActive(true)
-            bellTower = try AVAudioPlayer(data: tone.data, fileTypeHint: AVFileTypeWAVE)
-            bellTower?.numberOfLoops = times
-            bellTower!.play()
+            for _ in 0..<times {
+                bellTower = try AVAudioPlayer(data: tone.data, fileTypeHint: AVFileTypeWAVE)
+                bellTower?.prepareToPlay()
+                bellTower?.play()
+                sleep(3)
+            }
             print("bell tolled")
         } catch {
             print("couldn't play sound")
@@ -188,5 +211,47 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, TimerContro
         let seconds = time - Double(minutes) * 60
         return String(format:"%02i:%02i",minutes,Int(seconds))
     }
+    func updateButtonsForStage() {
+        switch self.stage! {
+        case TimerStage.unSet:
+            self.startButton.isHidden = true
+            self.startButton.isUserInteractionEnabled = false
+            self.finishEarlyButton.isHidden = true
+            self.finishEarlyButton.isUserInteractionEnabled = false
+            break
+        case TimerStage.starting:
+            self.startButton.setTitle("Start", for: UIControlState.normal)
+            self.startButton.isHidden = false
+            self.startButton.isUserInteractionEnabled = true
+            self.finishEarlyButton.isHidden = true
+            self.finishEarlyButton.isUserInteractionEnabled = false
+            break
+        case TimerStage.warmUp:
+            self.startButton.isHidden = false
+            self.startButton.isUserInteractionEnabled = true
+            self.finishEarlyButton.isHidden = true
+            self.finishEarlyButton.isUserInteractionEnabled = false
+            break
+        case TimerStage.mainSession:
+            self.startButton.isHidden = false
+            self.startButton.isUserInteractionEnabled = true
+            self.finishEarlyButton.isHidden = true
+            self.finishEarlyButton.isUserInteractionEnabled = false
+            break
+        case TimerStage.paused:
+            self.startButton.setTitle("Resume", for: UIControlState.normal)
+            self.startButton.isHidden = false
+            self.startButton.isUserInteractionEnabled = true
+            self.finishEarlyButton.isHidden = false
+            self.finishEarlyButton.isUserInteractionEnabled = true
+            break
+        case TimerStage.ended:
+            self.startButton.isHidden = true
+            self.startButton.isUserInteractionEnabled = false
+            self.finishEarlyButton.setTitle("Finished", for: UIControlState.normal)
+            self.finishEarlyButton.isHidden = false
+            self.finishEarlyButton.isUserInteractionEnabled = true
+            break
+        }
+    }
 }
-

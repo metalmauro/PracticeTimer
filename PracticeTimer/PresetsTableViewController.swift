@@ -42,12 +42,13 @@ class PresetsTableViewController: ViewController, UITableViewDataSource, UITable
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard self.presets.count > 0 else {
             let defaultPreset = Preset()
+            defaultPreset.title = "Test"
             defaultPreset.startingSound = "Bell 14"
             defaultPreset.endingSound = "Bell 14"
             defaultPreset.tapEnabled = true
             defaultPreset.tapSound = "singingbowl 57"
-            defaultPreset.warmupTime = 60.0
-            defaultPreset.timeLength = 60*20
+            defaultPreset.warmupTime = 5.0
+            defaultPreset.timeLength = 60*5
             try! realm.write {
                 realm.add(defaultPreset)
             }
@@ -85,7 +86,10 @@ class PresetsTableViewController: ViewController, UITableViewDataSource, UITable
         }
         self.tableView.reloadData()
     }
-    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cell.backgroundColor = UIColor(red: 18/200, green: 50/200, blue: 84/200, alpha: 1.0)
+        
+    }
     // Override to support rearranging the table view.
     func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
 
