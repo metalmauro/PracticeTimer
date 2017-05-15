@@ -132,9 +132,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, TimerContro
             self.startButton.setTitle("Resume", for: UIControlState.normal)
             timer?.invalidate()
             self.stage = TimerStage.paused
+            UIApplication.shared.isIdleTimerDisabled = false
             updateButtonsForStage()
             timer = nil
         } else {
+            UIApplication.shared.isIdleTimerDisabled = true
             if warmUpCount! > 0.0 {
                 self.stage = TimerStage.warmUp
             } else if self.count! > 0.0 && warmUpCount! <= 0.0 {
@@ -185,6 +187,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, TimerContro
         self.finishEarlyButton.isHidden = true
         self.reloadInputViews()
     }
+    
+    
     //MARK: - Play SoundFile
     // takes in String for soundFile, and plays file the number of times inputted
     func playSound(_ times:Int,_ file:String){
