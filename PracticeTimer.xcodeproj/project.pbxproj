@@ -12,6 +12,7 @@
 		952D11C11E69AB29001BCAFF /* AddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952D11C01E69AB29001BCAFF /* AddViewController.swift */; };
 		952D11C31E69BADB001BCAFF /* BellSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952D11C21E69BADB001BCAFF /* BellSelectViewController.swift */; };
 		952D11C51E69D31F001BCAFF /* BellCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952D11C41E69D31F001BCAFF /* BellCollectionViewCell.swift */; };
+		95952C581EE61A6900C1201E /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95952C571EE61A6900C1201E /* UserNotifications.framework */; };
 		95FADB451E68579E0005B11F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95FADB441E68579E0005B11F /* AppDelegate.swift */; };
 		95FADB471E68579E0005B11F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95FADB461E68579E0005B11F /* ViewController.swift */; };
 		95FADB4A1E68579E0005B11F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 95FADB481E68579E0005B11F /* Main.storyboard */; };
@@ -31,6 +32,7 @@
 		952D11C01E69AB29001BCAFF /* AddViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddViewController.swift; sourceTree = "<group>"; };
 		952D11C21E69BADB001BCAFF /* BellSelectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BellSelectViewController.swift; sourceTree = "<group>"; };
 		952D11C41E69D31F001BCAFF /* BellCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BellCollectionViewCell.swift; sourceTree = "<group>"; };
+		95952C571EE61A6900C1201E /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		95FADB411E68579E0005B11F /* PracticeTimer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PracticeTimer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		95FADB441E68579E0005B11F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		95FADB461E68579E0005B11F /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -49,6 +51,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95952C581EE61A6900C1201E /* UserNotifications.framework in Frameworks */,
 				FD564C30B7D0C90B427341A3 /* Pods_PracticeTimer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -59,6 +62,7 @@
 		01FED906895E154DB33BF14A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				95952C571EE61A6900C1201E /* UserNotifications.framework */,
 				CB0D048C71263EF99E430CAC /* Pods_PracticeTimer.framework */,
 			);
 			name = Frameworks;
